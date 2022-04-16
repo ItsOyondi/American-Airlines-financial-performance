@@ -7,6 +7,6 @@
 
 1. To determine which of the operating regions has been profitable for America Airlines.
 2. To establish the relationship between  revenue and operating expenses.
-3. To identify the years with the highest and lowest number of passengers across the regions. 
+3. To establish the year in which American Airlines had the highest and lowest available passenger seats per region.
 
 _Data source: http://web.mit.edu/airlinedata/www/American.html [http://web.mit.edu/airlinedata/www/2020%2012%20Month%20Documents/Traffic%20and%20Capacity/Individual%20Carrier%20Details/Traffic&Capacity%20American%20Airlines.xls]_
