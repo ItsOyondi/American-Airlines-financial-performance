@@ -1,0 +1,183 @@
+---
+title: "518_Project"
+output: html_document
+author: "Josephat Oyondi, Hillary Kemei, Geoffrey Arumba"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+#loading libraries
+library("tidyverse")
+library("readxl")
+library("dplyr")
+library("patchwork") #allows visualization of more than one chart
+
+library("stringr") #load library for searching string matches
+ #reading data from the excel file
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r my_Data}
+#reading data from the excel file
+my_data <- read_excel("Traffic_Capacity_AA.xls") #source - http://web.mit.edu/airlinedata/www/default.html
+
+```
+
+
+
+```{r organize data}
+#organize financial data in columns for easier analysis
+organized_data <- my_data %>% 
+  pivot_longer(
+    cols = `1995` : `2020`, 
+    names_to = 'Year', 
+    values_to = 'Finance_values', values_drop_na = TRUE)
+```
+
+```{r}
+#create a function to extract the finance metric data
+extract_finance_data <- function(string){
+  organized_data[str_detect(organized_data$Abbrevs, string), ]
+}
+```
+
+```{r}
+#use the extract finance function to extract data for each financial metric
+Air_expense_per <-  data.frame(extract_finance_data("A_Exp"))
+pass_rev_per <- data.frame(extract_finance_data("PAX_Rev"))
+total_expenses <- data.frame(extract_finance_data("SUM_Exp"))
+total_pass_rev <- data.frame(extract_finance_data("SUM_PAX"))
+
+asm <-  data.frame(extract_finance_data("SUM_ASM"))
+```
+
+```{r}
+expenses <- select(Air_expense_per, Year, Financial_measures, Finance_values)
+pax_rev <- select(pass_rev_per, Year, Financial_measures, Finance_values)
+```
+
+
+```{r}
+#create a function for generating visuals ======================================
+
+gen_visuals <- function(vis_data){
+  #plot table
+  year = as.numeric(vis_data$Year)
+  ggplot(data = vis_data, aes(x = year, 
+                              y = Finance_values, 
+                              group = Financial_measures, 
+                              color = Financial_measures)) +
+    geom_line();
+}
+#end of gen_visuals function ===================================================
+#generate visualization for expenses
+```
+
+```{r}
+#combine visualizations for revenue, expenses and profit
+
+#find profit
+profit <- pax_rev %>% 
+  mutate(profits = (pax_rev$Finance_values - expenses$Finance_values))
+
+#changing row names to profit
+
+profit$Financial_measures[which(profit$Financial_measures == "Pax Rev - Atlantic")]<- "Profit - Atlantic" 
+profit$Financial_measures[which(profit$Financial_measures == "Pax Rev - Domestic")]<- "Profits-Domestic" 
+profit$Financial_measures[which(profit$Financial_measures == "Pax Rev - International")]<- "Profits-International" 
+profit$Financial_measures[which(profit$Financial_measures == "Pax Rev - Latin America")]<- "Profits- Latin America"  
+profit$Financial_measures[which(profit$Financial_measures == "Pax Rev - Pacific")]<- "Profits-Pacific" 
+
+
+```
+```{r}
+gen_visuals(pax_rev)
+
+```
+
+```{r}
+gen_visuals(expenses)
+```
+
+
+
+```{r}
+#plot profit
+year = as.numeric(profit$Year)
+profit_plot <- ggplot(data = profit, aes(x = year, 
+                          y = profits,
+                          fill = Financial_measures))+
+  geom_area();
+
+#combining add
+
+profit_plot
+
+```
+
+
+Based on the above visualization, it is notable that AA's profitability has not been constant across all the regions. For instance, the profits between 2015 and 2019, domestic flights were leading in profitability, but between 2019 and 2020, the company experienced significant losses in domestic flights while most of its revenue emerged from international and Latin America regions. 
+
+To achieve objective 1 (To determine which of the operating regions has been profitable for America Airlines.) of our project, my analysis was based on the variations across all the years. This is because, although domestic flights recorded the highest revenue throughout all the years, the expenses were positively correlated with revenue, suggesting that the profits generated might be lower. 
+
+From the visualization, it is notable that Latin America has has not experienced significant losses and the profit chart has been on the positive side and even increased more towards 2020 when domestic flights recorded drastic losses. Therefore, it is concluded that Latin America has been the most profitable operating region for American Airlines.
+
+```{r}
+expe_cummulatives <- expenses %>% 
+  group_by(Year) %>%
+  summarise(exp_ = sum(Finance_values))
+
+
+##################################################### 
+
+rev_cummulatives <- pax_rev %>%
+  group_by(Year) %>%
+  summarise(rev_ = sum(Finance_values))
+```
+
+
+
+```{r}
+#convert to dataframe
+rev_data_f = data.frame(rev_cummulatives) 
+exp_data_f = data.frame(expe_cummulatives)
+
+#create charts for revenue vs expenses throughout the period.
+#plot chart with two data sets
+
+compare_revexp <- ggplot(NULL) + 
+  geom_line(data = rev_data_f, aes(x = as.numeric(Year), y = rev_), col = "purple") + 
+  geom_line(data = exp_data_f, aes(x = as.numeric(Year), y = exp_), col = "orange")
+
+compare_revexp
+```
+
+From the above graph we can deduce the following:
+1. There is a drastic decline in both revenue and expenses in the year 2020. This may be attributed to the Covid-19 pandemic which occasioned a reduction in travel activities as most travel was cancelled. The expense
+2. The period between 2003 and 2014 is one with a continuous and steady rise in both revenue and expenses compared to other periods.
+3. There was a very slight change in revenue between 1995 and 2000 whereas there was a significant increase in revenue followed by a reduction of the same.
+4. Generally, over the years there has been a consistent increase in expenses and revenue. This is because of increased human activity leading to more travel by air. However this is not the case for 2001 and 2020
+
+
+```{r}
+#change Year to numeric
+yr = as.numeric(asm$Year)
+#bar
+ggplot(asm, aes(yr, Finance_values)) + geom_col()
+##line
+ggplot(asm, aes(x=yr, y=Finance_values, group = Financial_measures, 
+                color = Financial_measures)) + geom_point()
+```
+
+
+#The third task of this project was to establish the year in which American Airlines had the highest and lowest available passenger seats per region.To increase profits and leverage against other competitors, an airline has to operate on the economies of scale and for the airline industry, that means making more seats available.Looking casually at the raw data from American Airlines, it is not easy to establish which year the airline and its constituent operating regions had the highest number of available seats.To be able to achieve this, we visualized the ASM variable of the data.ASM is an acronyn for Available Seat Mile and it measures the total number of seats offered as opposed to the number of passengers onboard.From the visualized data, it is apparent that the lowest available seats were in 2020.There were also relatively lower available seats in 2001 and 2009 but not as more markedly as in 2020.This low availability of seats in 2020 can be solely attributed to the havoc that covid 19 racked on the global economy and particularly air travel.American Airlines had to scale down its operations due to reduced passenger availability and also because of the US and other governments closing of their airspaces to international flights and this led to the lower availability of seats.The lower availability of seats in 2009 is attributed to the global economic recession while the slump in 2001 brought out in the visualization charts above is solely attributed to the effects of the unprecedented terror attacks on the US.This costed the US Airline industry upto eight billion dollars in losses .sources: (https://www.cnbc.com/2021/09/11/how-9/11-forever-changed-air-travel.html),(https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.203.1445&rep=rep1&type=pdf).
+
+
