@@ -1,4 +1,4 @@
-# STA_Project_JOKEAR
+# STA_Project_American Airlines
 ## Members: Josephat Oyondi, Geofrey Arumba, Hillary Kemei
 
 # STA 518 project proposal_
