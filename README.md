@@ -25,6 +25,7 @@ From the visualization, it is notable that Latin America did not experience sign
 ![image](https://user-images.githubusercontent.com/97532392/166570568-3d5ed01d-2ec9-4236-be63-2fb425eddd30.png)
 
 Fig 4. AA financial performance (expenses and revenue). 
+
 From the above visualization, it is notable that although the revenue and expenses are not equal, there was a significant correlation. AA's management seems to have had a flexible expenditure plan that was adjusted as the revenue drops or increases. 
 
 Further analysis will focus on this objective: To establish the year in which American Airlines had the highest and lowest available passenger seats per region.
