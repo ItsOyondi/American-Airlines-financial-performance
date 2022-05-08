@@ -13,7 +13,7 @@ Fig 1. AA financial performance - Revenue
 
 Fig 2. AA financial performance  - Expenses
 
-Based on the above visualizations, we notable that AA’s profitability has not been constant across all the regions. For instance, the profits between 2015 and 2019, domestic flights were leading in profitability, but between 2019 and 2020, the company experienced notable losses in domestic flights while most of its revenue emerged from international and Latin America regions.
+Based on the above visualizations, we noted that AA’s profitability has not been constant across all the regions. For instance, the profits between 2015 and 2019, domestic flights were leading in profitability, but between 2019 and 2020, the company experienced notable losses in domestic flights while most of its revenue emerged from international and Latin America regions.
 
 To identify the most profitable region, my analysis was based on the variations (in revenue and expenses) across all the years. This is because, although domestic flights recorded the highest revenue throughout all the years, the expenses were positively correlated with revenue, suggesting that the profits generated might be lower. As a result, i created an area chart that showing the amount of variations (in a negative and positive scale). The bigger the area size, the more the variation. Fig. 3 below shows the final visualization.
 ![image](https://user-images.githubusercontent.com/97532392/166568809-01e503a0-acb0-4678-81b8-9d37faccb00f.png)
